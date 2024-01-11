@@ -1,0 +1,128 @@
+--Table View
+SELECT * FROM credit_cards;
+
+--Total No. of Records in credit_cards table.
+select count(*) as Total_No_of_Records from credit_cards;
+
+-- 1. What is the total amount spent by everyone?
+SELECT SUM(Amount) as Total_Amount
+from credit_cards;
+
+--2. Which city has the:
+--Highest total expenditure
+select city, amount
+from credit_cards
+group by city
+order by SUM(amount) DESC
+limit 1;
+
+--Lowest total expenditure
+select city, amount
+from credit_cards
+group by city
+order by SUM(amount)
+limit 1;
+
+--Highest average expenditure
+SELECT city ,AVG(Amount)
+from credit_cards
+GROUP BY city
+order by AVG(amount) DESC
+limit 1;
+
+--Lowest average expenditure
+SELECT city ,AVG(Amount)
+from credit_cards
+GROUP BY city
+order by AVG(amount)
+limit 1;
+
+ALTER TABLE credit_cards
+RENAME COLUMN "card type" to "card_type";
+ALTER TABLE credit_cards
+RENAME COLUMN "exp type" to "exp_type";
+select * from credit_cards;
+
+--The card type “Platinum” was used for which “Exp Type” the most?
+select exp_type FROM credit_cards
+where card_type = "Platinum"
+GRoup by exp_type
+order by SUM(Amount) desc
+limit 1;
+
+--Come up with your own insights!
+ --1. Which card type is most used by male and female?
+select gender, card_type from credit_cards
+group by gender
+order by MAX(distinct card_type) desc;
+--Insight:Females have a preference for Silver Type of Card whereas it is Signature for Males.
+
+ --2.Which exp type is most used by male and female?
+ select gender, exp_type from credit_cards
+ group by gender
+ order by max(DISTINCT exp_type) DESC;
+ --Insight: In terms of type of expenses, Bills are the highest spend for females and Travel is for males 
+ 
+ --Which gender spend more in Credit Card?
+ select gender, sum(amount) as Credit_Card_Spend_Amount
+ from credit_cards
+ group by gender
+ order by Credit_Card_Spend_Amount desc;
+ --Insight: Female spend more in credit card.
+
+ --In which month of the year credit card usage is the highest.
+ select SUBSTR(date,-6,3) as Month,SUBSTR(date,-2,2) as Year, count(*) as Credit_Card_Usage
+ from credit_cards
+ group by Year, Month
+ order by Credit_Card_Usage DESC;
+ --Insight: August month of 2014 year credit card usage is highest. 
+
+--Find top 5 cities of India which all spended credit card maximum .
+select city, count(*) as Credit_Card_Spend
+from credit_cards
+group by city
+order by Credit_Card_Spend DESC
+limit 5;
+
+ --Find top 5 cities of India which all spended credit card minimum 
+select city, count(*) as Credit_Card_Spend
+from credit_cards
+group by city
+HAVING count(*) <5
+order by Credit_Card_Spend;
+
+--Find out the expenses of credit card of Males and Females monthwise
+select gender,SUBSTR(date,-6,3) as Month ,  sum(amount) as Expense_of_Credit_Card
+from credit_cards
+group by gender, Month;
+
+--Relationship between card type and exp type
+select card_type, exp_type, count(*) as CountA
+from credit_cards
+group by card_Type, exp_type;
+
+--Relation of city with card type distribution
+SELECT city, card_type,Card_Count from
+(select city, card_type, count(*) as Card_Count
+from credit_cards
+group by city, card_type)
+Group by city
+order by Card_Count desc;
+
+--Relation of city with exp type distribution
+select city, exp_type, count(*) as Exp_Type_Count
+from credit_cards
+group by city, exp_type;
+
+--Relation of city with gender wise distribution
+select city, gender, count(*) as Genderwise_Count
+from credit_cards
+group by city, gender;
+
+--city with amount
+select city, sum(amount) as Total_Amount
+from credit_cards
+group by city
+order by Total_Amount desc;
+--Insights: Greater Mumbai, India has spend maximum money by using credit card.
+
